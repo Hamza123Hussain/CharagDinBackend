@@ -1,27 +1,30 @@
 import { doc, setDoc } from 'firebase/firestore'
-import { v4 as uuid } from 'uuid'
-import { db } from '../../Firebase.js'
+import { db } from '../../../FireBase.js'
 
 export const CategoryMaker = async (req, res) => {
-  const RandomID = uuid() // Unique ID for the document
   try {
     const { CategoryName, UserEmail } = req.body
 
-    // Check if UserEmail is provided
-    if (!UserEmail) {
-      return res.status(400).json({ error: 'UserEmail is required' })
+    // Check if UserEmail and CategoryName are provided
+    if (!UserEmail || !CategoryName) {
+      return res
+        .status(400)
+        .json({ error: 'UserEmail and CategoryName are required' })
     }
+
+    // Optional: Sanitize UserEmail if needed
     // const sanitizedUserEmail = UserEmail.replace(/[@.]/g, '_')
 
-    // Save the original task and UserEmail
+    // Save the new category to Firestore
     await setDoc(doc(db, 'Category', CategoryName), {
       Name: CategoryName,
       MadeBY: UserEmail,
-      ID: uuid(),
+      ID: uuid(), // Consider using a dynamic or unique ID if applicable
     })
+
     res.status(200).json({ CategoryName, UserEmail })
   } catch (error) {
     console.error('Error:', error)
-    res.status(500).json({ error: 'Failed to generate Movie recommendations' })
+    res.status(500).json({ error: 'Failed to create category' })
   }
 }

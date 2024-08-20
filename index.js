@@ -1,9 +1,10 @@
 import express from 'express'
 import cors from 'cors'
 import { Port } from './Config.js'
-import CategoryRouter from './DB/Routes/Create/Category.js'
-import ProductRouter from './DB/Routes/Create/ProductRouter.js'
+
 import AuthRouter from './DB/Routes/Auth/AuthController.js'
+import ProductRouter from './DB/Routes/Product/ProductRouter.js'
+import CategoryRouter from './DB/Routes/Catorgory/Category.js'
 const app = express()
 
 app.use(express.json())

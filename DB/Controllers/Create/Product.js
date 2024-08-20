@@ -5,6 +5,7 @@ export const ProductMaker = async (req, res) => {
   try {
     const { ProductName, ImageUrl, UserEmail, Category } = req.body
 
+    const ProductID = uuid()
     // Check if UserEmail and ProductName are provided
     if (!UserEmail || !ProductName) {
       return res
@@ -16,12 +17,12 @@ export const ProductMaker = async (req, res) => {
     // const sanitizedUserEmail = UserEmail.replace(/[@.]/g, '_')
 
     // Save the new Product to Firestore
-    await setDoc(doc(db, 'Product', ProductName), {
+    await setDoc(doc(db, 'Product', ProductID), {
       Name: ProductName,
       MadeBY: UserEmail,
       Category,
       ImageUrl,
-      ID: uuid(), // Consider using a dynamic or unique ID if applicable
+      ID: ProductID, // Consider using a dynamic or unique ID if applicable
     })
 
     res.status(200).json({ ProductName, UserEmail })

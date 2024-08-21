@@ -1,11 +1,12 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 
 import { doc, getDoc, setDoc } from 'firebase/firestore'
-import { Auth, db } from '../../../FireBase.js'
+import { Auth, db, Storage } from '../../../FireBase.js'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 
 export const SignUpController = async (req, res) => {
   const { email, password, Name } = req.body
-
+  const file = req.file
   try {
     // Check if the user already exists
     const userDocRef = doc(db, 'USERS', email)
@@ -23,6 +24,17 @@ export const SignUpController = async (req, res) => {
       password
     )
 
+    let imageUrl = ''
+
+    if (file) {
+      // Create a unique file name
+      const fileRef = ref(Storage, `User/${Name}`)
+
+      // Upload file to Firebase Storage
+      await uploadBytes(fileRef, file.buffer)
+      imageUrl = await getDownloadURL(fileRef) // Get the download URL for the uploaded file
+    }
+
     // Check if UserCredential is successfully obtained
     if (UserCredential && UserCredential.user) {
       // Set user details in Firestore
@@ -30,6 +42,7 @@ export const SignUpController = async (req, res) => {
         Name,
         email,
         UserID: UserCredential.user.uid,
+        imageUrl,
       })
 
       // Retrieve and return the user's data

@@ -1,9 +1,11 @@
 import { doc, setDoc } from 'firebase/firestore'
-import { db } from '../../../FireBase.js'
+import { db, Storage } from '../../../FireBase.js'
 import { v4 as uuid } from 'uuid'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 export const ProductMaker = async (req, res) => {
   try {
-    const { ProductName, ImageUrl, UserEmail, Category } = req.body
+    const { ProductName, UserEmail, Category } = req.body
+    const file = req.file
 
     const ProductID = uuid()
     // Check if UserEmail and ProductName are provided
@@ -13,15 +15,23 @@ export const ProductMaker = async (req, res) => {
         .json({ error: 'UserEmail and ProductName are required' })
     }
 
-    // Optional: Sanitize UserEmail if needed
-    // const sanitizedUserEmail = UserEmail.replace(/[@.]/g, '_')
+    let imageUrl = ''
+
+    if (file) {
+      // Create a unique file name
+      const fileRef = ref(Storage, `Product/${ProductName}`)
+
+      // Upload file to Firebase Storage
+      await uploadBytes(fileRef, file.buffer)
+      imageUrl = await getDownloadURL(fileRef) // Get the download URL for the uploaded file
+    }
 
     // Save the new Product to Firestore
     await setDoc(doc(db, 'Product', ProductID), {
       Name: ProductName,
       MadeBY: UserEmail,
       Category,
-      ImageUrl,
+      ImageUrl: imageUrl,
       ID: ProductID, // Consider using a dynamic or unique ID if applicable
     })
 

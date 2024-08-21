@@ -3,8 +3,9 @@ import { ProductMaker } from '../../Controllers/Create/Product.js'
 import { ProductUpdate } from '../../Controllers/Update/UpdateProduct.js'
 import { ProductDelete } from '../../Controllers/Delete/DeleteDoc.js'
 import { GetProducts } from '../../Controllers/Fetch/GetAllProducts.js'
+import { upload } from '../../../MulterConfig.js'
 const ProductRouter = Router()
-ProductRouter.post('/Create', ProductMaker)
+ProductRouter.post('/Create', upload.single('image'), ProductMaker)
 ProductRouter.put('/Update', ProductUpdate)
 ProductRouter.delete('/Delete/:ProductID', ProductDelete)
 ProductRouter.get('/Get', GetProducts)

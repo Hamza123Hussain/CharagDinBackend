@@ -16,7 +16,7 @@ export const ProductDelete = async (req, res) => {
     // Delete the product from Firestore
     await deleteDoc(doc(db, 'Product', ProductID))
 
-    res.status(200).json({ message: 'Product has been deleted' })
+    res.status(200).json(true)
   } catch (error) {
     console.error('Error:', error)
     res.status(500).json({ error: 'Failed to delete product' })

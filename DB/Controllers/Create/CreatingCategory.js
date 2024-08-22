@@ -1,43 +1,42 @@
-// Create/CreatingCategory.js
 import { doc, setDoc } from 'firebase/firestore'
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage' // Import necessary functions
+import { db, Storage } from '../../../FireBase.js'
 import { v4 as uuid } from 'uuid'
-import { db, Storage } from '../../../FireBase.js' // Import Storage
-
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 export const CategoryMaker = async (req, res) => {
   try {
-    const { CategoryName, UserEmail } = req.body
+    const { CategoryName, UserEmail, UserName } = req.body
     const file = req.file
 
-    // Check if required fields are provided
+    const CatogoryID = uuid()
+    // Check if UserEmail and ProductName are provided
     if (!UserEmail || !CategoryName) {
       return res
         .status(400)
-        .json({ error: 'UserEmail and CategoryName are required' })
+        .json({ error: 'UserEmail and ProductName are required' })
     }
 
     let imageUrl = ''
 
     if (file) {
       // Create a unique file name
-      const fileRef = ref(Storage, `categories/${CategoryName}`)
+      const fileRef = ref(Storage, `Catogory/${CategoryName}`)
 
       // Upload file to Firebase Storage
       await uploadBytes(fileRef, file.buffer)
       imageUrl = await getDownloadURL(fileRef) // Get the download URL for the uploaded file
     }
 
-    // Save the new category to Firestore
-    await setDoc(doc(db, 'Category', CategoryName), {
+    // Save the new Product to Firestore
+    await setDoc(doc(db, 'Catorgory', CategoryName), {
       Name: CategoryName,
-      MadeBY: UserEmail,
-      ImageUrl: imageUrl,
-      ID: uuid(),
+      MadeBY: UserName,
+      imageUrl,
+      ID: CatogoryID, // Consider using a dynamic or unique ID if applicable
     })
 
-    res.status(200).json({ CategoryName, UserEmail, imageUrl })
+    res.status(200).json({ CategoryName, UserEmail })
   } catch (error) {
     console.error('Error:', error)
-    res.status(500).json({ error: 'Failed to create category' })
+    res.status(500).json({ error: 'Failed to create Product' })
   }
 }

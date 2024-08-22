@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 export const ProductMaker = async (req, res) => {
   try {
-    const { ProductName, UserEmail, Category } = req.body
+    const { ProductName, UserEmail, Category, UserName } = req.body
     const file = req.file
 
     const ProductID = uuid()
@@ -29,7 +29,7 @@ export const ProductMaker = async (req, res) => {
     // Save the new Product to Firestore
     await setDoc(doc(db, 'Product', ProductID), {
       Name: ProductName,
-      MadeBY: UserEmail,
+      MadeBY: UserName,
       Category,
       ImageUrl: imageUrl,
       ID: ProductID, // Consider using a dynamic or unique ID if applicable

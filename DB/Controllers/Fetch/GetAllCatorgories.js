@@ -8,7 +8,7 @@ export const GetCatorgories = async (req, res) => {
       return res.status(400).json({ error: 'UserEmail is required' })
     }
     // Reference to the 'Category' collection
-    const CategoryCollectionRef = collection(db, 'Category')
+    const CategoryCollectionRef = collection(db, 'Catorgory')
     // Fetch all documents from the 'Category' collection
     const querySnapshot = await getDocs(CategoryCollectionRef)
     // Map the documents to an array of objects
